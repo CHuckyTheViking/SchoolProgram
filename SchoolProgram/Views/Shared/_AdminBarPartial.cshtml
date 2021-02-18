@@ -1,0 +1,19 @@
+﻿@if (SignInManager.IsSignedIn(User))
+{
+    @if (User.IsInRole("Admin"))
+    {
+        <div class="container">
+            <ul class="nav justify-content-end">
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="" asp-controller="SchoolClasses" asp-action="Index">Classes</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="Identity" asp-page="/Account/Register">Register</a>
+                </li>
+                @*<li class="nav-item">
+                    <a class="nav-link" href="#">Settings</a>
+                </li>*@
+            </ul>
+        </div>
+    }
+}

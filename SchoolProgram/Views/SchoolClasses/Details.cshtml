@@ -1,0 +1,57 @@
+﻿@model SchoolProgram.Models.SchoolClass
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>SchoolClass</h4>
+    <hr />
+    <dl class="row">
+    </dl>
+</div>
+<div>
+
+    <div class="card-columns" style="column-count: 4; align-items:center">
+        @try
+        {
+            <div class="card m-2" style="background: blue; ">
+
+                <div class="card-body p-2 text-center">
+                    <img style="object-fit: cover;" class="card-img-top p-1" src="@Model.Teacher.Picture" alt="Person Image">
+                    <h5 class="card-title mt-1">@Model.Teacher.DisplayName</h5>
+                    <p class="card-text">Teacher</p>
+                    <p class="card-text"><small class="text-info">@Model.Teacher.Email</small></p>
+                </div>
+            </div>
+
+            @foreach (var student in Model.Students)
+            {
+
+                <div class="card m-2" style="background: lightslategray; ">
+
+                    <div class="card-body p-2 text-center">
+                        <img style="object-fit: cover;" class="card-img-top p-1" src="@student.Picture" alt="Person Image">
+                        <h5 class="card-title mt-1">@student.DisplayName</h5>
+                        <p class="card-text">Student</p>
+                        <p class="card-text"><small class="">@Model.Id</small></p>
+                    </div>
+                </div>
+
+            }
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
+    </div>     
+
+
+
+
+        @*<a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |*@
+        <a asp-action="Index">Back to List</a>
+    </div>
