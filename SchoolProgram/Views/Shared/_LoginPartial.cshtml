@@ -7,6 +7,9 @@
         <a  class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">@User.FindFirst("DisplayName").Value</a>
     </li>
     <li class="nav-item">
+        <img class="position-relative rounded-circle" style="height: 40px; width: 40px;" src="@User.FindFirst("DisplayPicture").Value" />
+    </li>
+    <li class="nav-item">
         <form  class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
             <button  type="submit" class="nav-link btn btn-link text-dark">Logout</button>
         </form>

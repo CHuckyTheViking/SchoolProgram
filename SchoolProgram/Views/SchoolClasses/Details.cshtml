@@ -20,7 +20,7 @@
             <div class="card m-2" style="background: blue; ">
 
                 <div class="card-body p-2 text-center">
-                    <img style="object-fit: cover;" class="card-img-top p-1" src="@Model.Teacher.Picture" alt="Person Image">
+                    <img style="object-fit: cover;" class="card-img-top p-1 rounded-circle" src="@Model.Teacher.Picture" alt="Person Image">
                     <h5 class="card-title mt-1">@Model.Teacher.DisplayName</h5>
                     <p class="card-text">Teacher</p>
                     <p class="card-text"><small class="text-info">@Model.Teacher.Email</small></p>
@@ -30,10 +30,10 @@
             @foreach (var student in Model.Students)
             {
 
-                <div class="card m-2" style="background: lightslategray; ">
+                <div class="card m-2" style="background: lightslategray;">
 
                     <div class="card-body p-2 text-center">
-                        <img style="object-fit: cover;" class="card-img-top p-1" src="@student.Picture" alt="Person Image">
+                        <img style="object-fit: cover;" class="card-img-top p-1 rounded-circle" src="@student.Picture" alt="Person Image">
                         <h5 class="card-title mt-1">@student.DisplayName</h5>
                         <p class="card-text">Student</p>
                         <p class="card-text"><small class="">@Model.Id</small></p>

@@ -1,0 +1,80 @@
+﻿@page
+@model EmailModel
+@{
+    ViewData["Title"] = "Manage Information";
+    ViewData["ActivePage"] = ManageNavPages.Email;
+}
+
+<h4 class="text-center">@ViewData["Title"]</h4>
+<partial name="_StatusMessage" model="Model.StatusMessage" />
+<div class="col align-content-center">
+
+    <div class="col-md-6 border mb-3">
+        <form id="name-form" method="post">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group">
+                
+                <label>@Model.Input.FirstName @Model.Input.LastName</label>
+                
+            </div>
+            <div class="form-group">
+                
+                <input asp-for="Input.FirstName" class="form-control" />
+                <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+                <input asp-for="Input.LastName" class="form-control" />
+                <span asp-validation-for="Input.LastName" class="text-danger"></span>
+            </div>
+            <button id="change-name-button" type="submit" asp-page-handler="ChangeName" class="btn btn-primary">Change name</button>
+        </form>
+    </div>
+
+    <div class="col-md-6 border mb-3">
+        <form class="" id="picture-form" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group">
+                <label>Current Picture</label>
+                <img class="w-50 h-50 border-dark" src="@Model.Input.Picture" />
+            </div>
+            <div class="form-group border-0">
+                <label>New Picture</label>
+                <input asp-for="Input.NewPicture" type="file" name="file" class="form-control" />
+                <span asp-validation-for="Input.NewPicture" class="text-danger"></span>
+            </div>
+            <button id="change-picture-button" type="submit" asp-page-handler="ChangePicture" class="btn btn-primary">Change picture</button>
+        </form>
+    </div>
+
+    <div class="col-md-6 border mb-3">
+        <form class="" id="email-form" method="post">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Email"></label>
+
+                @if (Model.IsEmailConfirmed)
+                {
+                    <div class="input-group">
+                        <input asp-for="Email" class="form-control" disabled />
+                        <div class="input-group-append">
+                            <span class="input-group-text text-success font-weight-bold">✓</span>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <input asp-for="Email" class="form-control" disabled />
+                    <button id="email-verification" type="submit" asp-page-handler="SendVerificationEmail" class="btn btn-link">Send verification email</button>
+                }
+            </div>
+            <div class="form-group">
+                <label asp-for="Input.NewEmail"></label>
+                <input asp-for="Input.NewEmail" class="form-control" />
+                <span asp-validation-for="Input.NewEmail" class="text-danger"></span>
+            </div>
+            <button id="change-email-button" type="submit" asp-page-handler="ChangeEmail" class="btn btn-primary">Change email</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

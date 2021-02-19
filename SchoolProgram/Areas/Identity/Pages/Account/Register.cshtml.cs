@@ -54,6 +54,7 @@ namespace SchoolProgram.Areas.Identity.Pages.Account
         public class InputModel
         {
             [Required]
+            [StringLength(100, ErrorMessage = "Please select a role", MinimumLength = 1)]
             [DataType(DataType.Text)]
             [Display(Name = "Role")]
             public string Role { get; set; }
@@ -96,20 +97,21 @@ namespace SchoolProgram.Areas.Identity.Pages.Account
 
         
 
-        //string returnUrl = null
         
-        public async Task<IActionResult> OnPostAsync(IFormFile file, string returnUrl = null)
+        public async Task<IActionResult> OnPostAsync(IFormFile file)
         {
-            returnUrl ??= Url.Content("~/");
-            
-            string pic = await AzureStorageServices.UploadPictureAsync(file);
+            string returnUrl = Url.Content("~/Identity/Account/Register");
+            string pic = "";
+            try
+            {
+                pic = await AzureStorageServices.UploadPictureAsync(file);
+            }
+            catch { }
            
             
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-
-                
 
                 var user = new AppUser
                 {
@@ -120,9 +122,6 @@ namespace SchoolProgram.Areas.Identity.Pages.Account
                     Role = Input.Role,
                     Picture = pic
                 };
-
-
-
 
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
@@ -159,15 +158,15 @@ namespace SchoolProgram.Areas.Identity.Pages.Account
                     await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
                         $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
-                    //if (_userManager.Options.SignIn.RequireConfirmedAccount)
-                    //{
-                    //    return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
-                    //}
-                    //else
-                    //{
-                    //    await _signInManager.SignInAsync(user, isPersistent: false);
-                    //    return LocalRedirect(returnUrl);
-                    //}
+                    if (_userManager.Options.SignIn.RequireConfirmedAccount)
+                    {
+                        return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
+                    }
+                    else
+                    {
+                        //await _signInManager.SignInAsync(user, isPersistent: false);
+                        return LocalRedirect(returnUrl);
+                    }
                 }
                 foreach (var error in result.Errors)
                 {

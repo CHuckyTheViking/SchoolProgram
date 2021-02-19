@@ -19,7 +19,8 @@ namespace SchoolProgram.Data
             var _identity = await base.GenerateClaimsAsync(user);
 
             _identity.AddClaim(new Claim("DisplayName", user.DisplayName));
-
+            _identity.AddClaim(new Claim("DisplayPicture", user.DisplayPicture));
+            
             return _identity;
         }
     }

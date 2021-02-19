@@ -32,13 +32,39 @@ namespace SchoolProgram.Services
                     PublicAccess = BlobContainerPublicAccessType.Blob
                 });
 
-                CloudBlockBlob blob = container.GetBlockBlobReference(file.FileName);
+                if (file != null)
+                {
+                    
 
-                await blob.UploadFromStreamAsync(file.OpenReadStream());
+                    CloudBlockBlob blob = container.GetBlockBlobReference(file.FileName);
 
-                var uri = container.GetBlockBlobReference(file.FileName).SnapshotQualifiedUri;
+                    await blob.UploadFromStreamAsync(file.OpenReadStream());
+                    
+                    var uri = container.GetBlockBlobReference(file.FileName).SnapshotQualifiedUri;
 
-                url = uri.ToString();
+                    url = uri.ToString();
+                }
+                else
+                {
+                    
+                    var exists = container.GetBlockBlobReference("defaultContact.png").ExistsAsync();
+
+                    if (exists.Result == false)
+                    {
+                        CloudBlockBlob blob = container.GetBlockBlobReference("defaultContact.png");
+
+                        await blob.UploadTextAsync("~Images/Profile/defaultContact.png");
+                        var uri = container.GetBlockBlobReference("defaultContant.png").SnapshotQualifiedUri;
+
+                        url = uri.ToString();
+
+                    }
+                    else
+                    {
+                        var uri = container.GetBlockBlobReference("defaultContact.png").SnapshotQualifiedUri;
+                        url = uri.ToString();
+                    }
+                }
 
             }
             catch { }

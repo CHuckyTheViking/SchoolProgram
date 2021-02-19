@@ -31,5 +31,7 @@ namespace SchoolProgram.Data
 
         [PersonalData]
         public string DisplayName => $"{FirstName} {LastName}";
+
+        public string DisplayPicture => $"{Picture}";
     }
 }
