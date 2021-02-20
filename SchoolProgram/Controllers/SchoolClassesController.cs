@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -34,28 +35,27 @@ namespace SchoolProgram.Controllers
         // GET: SchoolClasses/Details/5
         public async Task<IActionResult> Details(string id, SchoolClass schoolClass)
         {
+
             if (id == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Index));
             }
 
             if (schoolClass == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Index));    
             }
-            
-
             schoolClass = await _context.SchoolClass.Include(s => s.Students).Include(t => t.Teacher)
                 .FirstOrDefaultAsync(school => school.Id == id);
 
-            //List<AppUser> _students = new List<AppUser>();
-
-            //foreach (var s in schoolClass.Students)
-            //{
-            //    _students.Add(s);
-            //}
-
-
+            if (schoolClass.Teacher == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            if (schoolClass.Students == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
 
             return View(schoolClass);
         }
@@ -96,11 +96,21 @@ namespace SchoolProgram.Controllers
                 return NotFound();
             }
 
+            var _stu = await _userManager.GetUsersInRoleAsync("Student");
+            List<AppUser> _students = new List<AppUser>();
+            foreach (var s in _stu)
+            {
+                if (s.inClass == "False")
+                {
+                    _students.Add(s);
+                }
+            }
+
             var viewModel = new EditSchoolClassViewModel()
             {
                 CurrentClass = schoolClass,
                 Teachers = await _userManager.GetUsersInRoleAsync("Teacher"),
-                Students = await _userManager.GetUsersInRoleAsync("Student"),
+                Students = _students
                 
             };
 
@@ -139,7 +149,11 @@ namespace SchoolProgram.Controllers
             {
                 try
                 {
-                    
+                    foreach (var s in schoolClass.Students)
+                    {
+                        s.inClass = "True";
+                        _context.Update(s);
+                    }
                     _context.Update(schoolClass);
                     
                     await _context.SaveChangesAsync();
@@ -185,6 +199,7 @@ namespace SchoolProgram.Controllers
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
             var schoolClass = await _context.SchoolClass.FindAsync(id);
+            
             _context.SchoolClass.Remove(schoolClass);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

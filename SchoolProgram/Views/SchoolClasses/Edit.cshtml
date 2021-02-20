@@ -4,9 +4,11 @@
     ViewData["Title"] = "Edit";
 }
 
+
+
 <h1>Edit</h1>
 
-<h4>SchoolClass</h4>
+<h4>@Model.CurrentClass.Id</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -14,24 +16,22 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="@Model.CurrentClass.Id" />
 
-            <div class="form-group">
+            <div>
 
 
-
-                @Html.DropDownListFor(m => m.Teachers, new SelectList(Model.Teachers, "Id", "DisplayName"))
-
-
-
-
-                @Html.DropDownListFor(m => m.Students, new MultiSelectList(Model.Students, "Id", "DisplayName", "Select Students"), new { multiple = "multiple" })
-
+                <div>
+                    <label>Select a teacher</label>
+                    @Html.DropDownListFor(m => m.Teachers, new SelectList(Model.Teachers, "Id", "DisplayName"))
+                </div>
                 
 
+                <div class="mt-2 d-flex">
+                    <label class="mr-1">Select students</label>
+                    @Html.DropDownListFor(m => m.Students, new MultiSelectList(Model.Students, "Id", "DisplayName", "Select Students"), new { multiple = "multiple", size = "15", style = "width: 220px" })
+                </div>
+
+
             </div>
-
-            
-            
-
 
 
             <div class="form-group">

@@ -29,6 +29,10 @@ namespace SchoolProgram.Data
         [Column(TypeName = "nvarchar(200)")]
         public string Picture { get; set; }
 
+        [Column(TypeName = "varchar(5)")]
+        public string inClass { get; set; }
+
+
         [PersonalData]
         public string DisplayName => $"{FirstName} {LastName}";
 

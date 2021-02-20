@@ -76,6 +76,9 @@ namespace SchoolProgram.Areas.Identity.Pages.Account
             [Display(Name = "Picture")]
             public string Picture { get; set; }
 
+            [DataType(DataType.Text)]
+            public string inClass { get; set; }
+
             [Required]
             [EmailAddress]
             [Display(Name = "Email")]
@@ -120,7 +123,8 @@ namespace SchoolProgram.Areas.Identity.Pages.Account
                     FirstName = Input.FirstName,
                     LastName = Input.LastName,
                     Role = Input.Role,
-                    Picture = pic
+                    Picture = pic,
+                    inClass = "False"
                 };
 
                 var result = await _userManager.CreateAsync(user, Input.Password);
