@@ -12,6 +12,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using SchoolProgram.Data;
+using SchoolProgram.Services;
+using Microsoft.AspNetCore.Http;
 
 namespace SchoolProgram.Areas.Identity.Pages.Account
 {
@@ -21,14 +23,17 @@ namespace SchoolProgram.Areas.Identity.Pages.Account
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
         public LoginModel(SignInManager<AppUser> signInManager, 
             ILogger<LoginModel> logger,
-            UserManager<AppUser> userManager)
+            UserManager<AppUser> userManager,
+            RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
+            _roleManager = roleManager;
         }
 
         [BindProperty]
@@ -66,23 +71,41 @@ namespace SchoolProgram.Areas.Identity.Pages.Account
 
             if (!_userManager.Users.Any())
             {
+                
+                string pic = "";
+                try
+                {
+                    IFormFile file = null;
+                    pic = await AzureStorageServices.UploadPictureAsync(file);
+                }
+                catch { }
+
                 var admin = new AppUser
                 {
                     UserName = "admin@domain.com",
                     Email = "admin@domain.com",
                     FirstName = "Admin",
                     LastName = "Account",
-                    Role = "Admin"
+                    Role = "Admin",
+                    Picture = pic,
+                    inClass = "False"
                 };
                 
                 var result = await _userManager.CreateAsync(admin, "BytMig123!");
                 if (result.Succeeded)
                 {
+                    if (!_roleManager.Roles.Any())
+                    {
+                        await _roleManager.CreateAsync(new IdentityRole("Admin"));
+                        await _roleManager.CreateAsync(new IdentityRole("Student"));
+                        await _roleManager.CreateAsync(new IdentityRole("Teacher"));
+                    }
+
                     await _userManager.AddToRoleAsync(admin, "Admin");
                 }
-                //await _userManager.AddPasswordAsync(admin, "BytMig123!");
             }
 
+            await AzureStorageServices.UploadBackgroundAsync();
 
             // Clear the existing external cookie to ensure a clean login process
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);

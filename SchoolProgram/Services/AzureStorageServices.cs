@@ -15,8 +15,39 @@ namespace SchoolProgram.Services
 
         private static readonly string connectionString = "DefaultEndpointsProtocol=https;AccountName=jm23sa;AccountKey=TCeFeu3/n8QMNkEhiSWtm1Pj7fvWZQ3FEPHCcYKGe5tvLBNiC8wEP4VlfzMZr8sy2MIMknmFKTs8DTUTpqbJPQ==;EndpointSuffix=core.windows.net";
 
+        public static async Task UploadBackgroundAsync()
+        {
+            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(connectionString);
+            CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
+            CloudBlobContainer container = blobClient.GetContainerReference("schoolprogrampictures");
+
+            await container.CreateIfNotExistsAsync();
+
+            await container.SetPermissionsAsync(new BlobContainerPermissions
+            {
+                PublicAccess = BlobContainerPublicAccessType.Blob
+            });
+
+            var exists = await container.GetBlockBlobReference("BackgroundBlurred.jpg").ExistsAsync();
+            
+            if (exists == false)
+            {
+                CloudBlockBlob blob = container.GetBlockBlobReference("BackgroundBlurred.jpg");
+                await blob.UploadFromFileAsync("Images/Background/BackgroundBlurred.jpg");
+            }
+
+            var logoExists = await container.GetBlockBlobReference("SchoolLogo.png").ExistsAsync();
+            if (logoExists == false)
+            {
+                CloudBlockBlob blob = container.GetBlockBlobReference("SchoolLogo.png");
+                await blob.UploadFromFileAsync("Images/Logo/SchoolLogo.png");
+            }
+
+        }
+
         public static async Task<string> UploadPictureAsync(IFormFile file)
         {
+            
             string url = "";
 
             try
@@ -53,8 +84,8 @@ namespace SchoolProgram.Services
                     {
                         CloudBlockBlob blob = container.GetBlockBlobReference("defaultContact.png");
 
-                        await blob.UploadTextAsync("~Images/Profile/defaultContact.png");
-                        var uri = container.GetBlockBlobReference("defaultContant.png").SnapshotQualifiedUri;
+                        await blob.UploadFromFileAsync("Images/Profile/defaultContact.png");
+                        var uri = container.GetBlockBlobReference("defaultContact.png").SnapshotQualifiedUri;
 
                         url = uri.ToString();
 

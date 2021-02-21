@@ -133,12 +133,7 @@ namespace SchoolProgram.Areas.Identity.Pages.Account
                     _logger.LogInformation("User created a new account with password.");
 
 
-                    if (!_roleManager.Roles.Any())
-                    {
-                        await _roleManager.CreateAsync(new IdentityRole("Admin"));
-                        await _roleManager.CreateAsync(new IdentityRole("Student"));
-                        await _roleManager.CreateAsync(new IdentityRole("Teacher"));
-                    }
+                    
 
                     if (_userManager.Users.Count() == 1 && user.Role == "Admin")
                         await _userManager.AddToRoleAsync(user, "Admin");
@@ -168,7 +163,6 @@ namespace SchoolProgram.Areas.Identity.Pages.Account
                     }
                     else
                     {
-                        //await _signInManager.SignInAsync(user, isPersistent: false);
                         return LocalRedirect(returnUrl);
                     }
                 }
